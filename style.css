@@ -11,8 +11,8 @@ video {
     width: 200;          
     height: 125;         
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 500;
+    margin-right: 500;
     background: #eee;
     object-fit: cover;   
 }
