@@ -7,6 +7,7 @@
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 20px; }
         #preview { border: 2px solid black; width: 400px; height: 300px; }
         #status { color: red; margin-top: 10px; }
+        #lastCode { font-weight: bold; }
     </style>
 </head>
 <body>
@@ -16,7 +17,9 @@
     <p>Dernier code scanné : <span id="lastCode">---</span></p>
     <button id="downloadCsv">Télécharger CSV</button>
 
+    <!-- ZXing depuis CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
+

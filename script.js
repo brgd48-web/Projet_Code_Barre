@@ -5,7 +5,7 @@ const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-console.log("Script chargé");
+console.log("Scanner chargé");
 
 // Démarrage de la caméra et scan
 async function startCamera() {
@@ -16,6 +16,7 @@ async function startCamera() {
             return;
         }
 
+        // Choisir la caméra arrière si disponible
         const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
         statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
 
@@ -33,7 +34,7 @@ async function startCamera() {
     } catch (error) {
         console.error(error);
         if (error.name === "NotAllowedError") {
-            statusMsg.textContent = "⚠️ Accès caméra refusé.";
+            statusMsg.textContent = "⚠️ Accès caméra refusé. Autorisez l'accès dans votre navigateur.";
         } else {
             statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
         }
