@@ -5,11 +5,19 @@ const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-console.log("Scanner chargé");
 
-// Démarrage de la caméra et scan
+
+// Fonction pour démarrer le flux vidéo
 async function startCamera() {
     try {
+        // Demande d'accès à la caméra
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        video.srcObject = stream;
+        video.play();
+
+        statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
+
+        // Récupère les périphériques vidéo disponibles
         const devices = await codeReader.listVideoInputDevices();
         if (devices.length === 0) {
             statusMsg.textContent = "❌ Aucune caméra détectée.";
@@ -18,8 +26,8 @@ async function startCamera() {
 
         // Choisir la caméra arrière si disponible
         const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
-        statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
 
+        // Lancer le scan en direct sur le <video>
         codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
             if (result) {
                 const code = result.getText();
