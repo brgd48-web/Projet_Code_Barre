@@ -5,7 +5,7 @@ const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-
+print("test");
 // Démarrage de la caméra et scan
 async function startCamera() {
     try {
