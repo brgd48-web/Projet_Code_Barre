@@ -10,7 +10,11 @@ document.body.insertBefore(statusMsg, video);
 
 // Initialisation ZXing
 const codeReader = new ZXing.BrowserMultiFormatReader();
-
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    video.srcObject = stream;
+})
+.catch(err => console.error("Erreur accès caméra :", err));
 // Fonction pour démarrer la caméra
 async function startCamera() {
   try {
