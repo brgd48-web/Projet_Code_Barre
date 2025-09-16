@@ -4,23 +4,35 @@
   <title>Test ZXing</title>
 </head>
 <body>
-  <video id="preview" width="400" height="300" autoplay></video>
-  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
-  <script>
-    const codeReader = new ZXing.BrowserMultiFormatReader();
-    codeReader.listVideoInputDevices()
-      .then(videoInputDevices => {
-        const deviceId = videoInputDevices[0].deviceId;
-        codeReader.decodeFromVideoDevice(deviceId, 'preview', (result, err) => {
-          if (result) {
-            console.log("Code scanné : " + result.getText());
-          }
-          if (err && !(err instanceof ZXing.NotFoundException)) {
-            console.error(err);
-          }
+  <video id="preview" width="400" height="300" autoplay muted playsinline></video>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
+<script>
+const codeReader = new ZXing.BrowserMultiFormatReader();
+const video = document.getElementById('preview');
+
+async function startCamera() {
+    try {
+        const devices = await codeReader.listVideoInputDevices();
+        if (devices.length === 0) {
+            console.error("Aucune caméra détectée");
+            return;
+        }
+
+        const deviceId = devices[0].deviceId;
+        codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+            if (result) {
+                console.log("Code scanné : " + result.getText());
+            }
+            if (err && !(err instanceof ZXing.NotFoundException)) {
+                console.error(err);
+            }
         });
-      })
-      .catch(err => console.error(err));
-  </script>
+    } catch (e) {
+        console.error("Erreur caméra :", e);
+    }
+}
+
+startCamera();
+</script>
 </body>
 </html>
