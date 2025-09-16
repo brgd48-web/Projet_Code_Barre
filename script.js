@@ -5,7 +5,8 @@ const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-print("test");
+console.log("Script chargé");
+
 // Démarrage de la caméra et scan
 async function startCamera() {
     try {
@@ -15,12 +16,9 @@ async function startCamera() {
             return;
         }
 
-        // Choisir la caméra arrière si disponible
         const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
-
         statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
 
-        // Lance le scan en direct
         codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
             if (result) {
                 const code = result.getText();
@@ -49,15 +47,17 @@ downloadBtn.addEventListener('click', () => {
         return;
     }
 
-    let csvContent = "data:text/csv;charset=utf-8,Code,Date\n";
+    let csvContent = "Code,Date\n";
     scannedCodes.forEach(item => {
         csvContent += `${item.code},${item.date}\n`;
     });
 
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "scans.csv");
+    link.href = url;
+    link.download = "scans.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
