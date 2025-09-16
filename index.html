@@ -2,25 +2,22 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner de codes-barres</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 20px; }
-        #preview { border: 2px solid black; width: 400px; height: 300px; }
-        #status { color: red; margin-top: 10px; }
-        #lastCode { font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Scanner de codes-barres</h2>
-    <button id="startButton">Démarrer la caméra</button>
-    <video id="preview" muted playsinline style="width: 400px; height: 300px; border: 2px solid black;"></video>
+    <h3>Version 1.0</h3>
+    <div id="controls">
+        <button id="startButton">Démarrer la caméra</button>
+    </div>
+    <video id="preview" muted playsinline></video>
     <p id="status">⏳ Initialisation...</p>
     <p>Dernier code scanné : <span id="lastCode">---</span></p>
     <button id="downloadCsv">Télécharger CSV</button>
 
-    <!-- ZXing depuis CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
