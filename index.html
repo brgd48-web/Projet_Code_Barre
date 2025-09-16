@@ -1,38 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Test ZXing</title>
+    <meta charset="UTF-8">
+    <title>Scanner de codes-barres</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 20px; }
+        #preview { border: 2px solid black; width: 400px; height: 300px; }
+        #status { color: red; margin-top: 10px; }
+    </style>
 </head>
 <body>
-  <video id="preview" width="400" height="300" autoplay muted playsinline></video>
-<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
-<script>
-const codeReader = new ZXing.BrowserMultiFormatReader();
-const video = document.getElementById('preview');
+    <h2>Scanner de codes-barres</h2>
+    <video id="preview" autoplay muted playsinline></video>
+    <p id="status">⏳ Initialisation...</p>
+    <p>Dernier code scanné : <span id="lastCode">---</span></p>
+    <button id="downloadCsv">Télécharger CSV</button>
 
-async function startCamera() {
-    try {
-        const devices = await codeReader.listVideoInputDevices();
-        if (devices.length === 0) {
-            console.error("Aucune caméra détectée");
-            return;
-        }
-
-        const deviceId = devices[0].deviceId;
-        codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
-            if (result) {
-                console.log("Code scanné : " + result.getText());
-            }
-            if (err && !(err instanceof ZXing.NotFoundException)) {
-                console.error(err);
-            }
-        });
-    } catch (e) {
-        console.error("Erreur caméra :", e);
-    }
-}
-
-startCamera();
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
+    <script src="scanner.js"></script>
 </body>
 </html>
