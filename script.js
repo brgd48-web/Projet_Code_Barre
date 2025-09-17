@@ -37,9 +37,12 @@ codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
 
         statusMsg.textContent = "✅ Scan réussi : " + code;
 
-        // 🔊 joue un bip
-        beepSound.currentTime = 0; // remet au début si déjà en lecture
+        // bip
+        beepSound.currentTime = 0; 
         beepSound.play();
+        if (navigator.vibrate) {
+            navigator.vibrate(200); 
+    }
     } else if (err && !(err instanceof ZXing.NotFoundException)) {
         statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
     }
@@ -54,7 +57,7 @@ codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
     }
 }
 
-// Télécharger CSV avec Code, Date, Heure
+// Télécharger CSV 
 downloadBtn.addEventListener('click', () => {
     if (scannedCodes.length === 0) {
         alert("Aucun scan enregistré !");
