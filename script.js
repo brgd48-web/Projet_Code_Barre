@@ -43,6 +43,8 @@ codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
         if (navigator.vibrate) {
             navigator.vibrate(200); 
     }
+    video.style.border = "5px solid lime";
+    setTimeout(() => video.style.border = "none", 200);
     } else if (err && !(err instanceof ZXing.NotFoundException)) {
         statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
     }
