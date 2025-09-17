@@ -58,9 +58,9 @@ downloadBtn.addEventListener('click', () => {
         return;
     }
 
-    let csvContent = "Code,Date,Heure\n";
+    let csvContent = "Code;Date;Heure\n";
     scannedCodes.forEach(item => {
-        csvContent += `${item.code},${item.date},${item.heure}\n`;
+        csvContent += `${item.code};${item.date};${item.heure}\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
