@@ -2,31 +2,44 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
+    background: #f8f8f8;
 }
-#preview {
-border: 2px solid black;
-width: 300px;
-height: 300px;
-object-fit: cover;
 
+#preview {
+    border: 2px solid black;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    margin: 0 auto 15px auto; /* centre automatiquement */
+    display: block;
 }
+
 video {
     border: 2px solid #333;
     border-radius: 8px;
     margin-bottom: 10px;
-    width: 200;          
-    height: 125;         
+    width: 200px;       /* ajout px */
+    height: 125px;      /* ajout px */
     display: block;
-    margin-left: 500;
-    margin-right: 500;
+    margin: 0 auto;     /* centre horizontalement */
     background: #eee;
-    object-fit: cover;   
+    object-fit: cover;
 }
+
 button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0078D7;
+    color: white;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #005a9e;
 }
 
 #controls {
@@ -40,4 +53,5 @@ button {
 
 #lastCode {
     font-weight: bold;
+    margin-top: 10px;
 }

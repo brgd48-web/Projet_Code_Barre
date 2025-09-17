@@ -8,15 +8,28 @@
 </head>
 <body>
     <h2>Scanner de codes-barres</h2>
-    <h3>Version 1.168</h3>
+    <h3>Version 1.17</h3>
+
+    <!-- Boutons de contrôle -->
     <div id="controls">
+        <button id="startBtn">▶️ Démarrer le scan</button>
+        <button id="downloadCsv">💾 Télécharger CSV</button>
     </div>
+
+    <!-- Vidéo -->
     <video id="preview" muted playsinline></video>
+
+    <!-- Statut et dernier code -->
     <p id="status">⏳ Initialisation...</p>
     <p>Dernier code scanné : <span id="lastCode">---</span></p>
-    <button id="downloadCsv">Télécharger CSV</button>
+
+    <!-- Son bip -->
     <audio id="beepSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+
+    <!-- ZXing library -->
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
+    
+    <!-- Ton script JS -->
     <script src="script.js"></script>
 </body>
 </html>
