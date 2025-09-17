@@ -20,27 +20,30 @@ async function startCamera() {
 
         statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
 
-        codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
-            if (result) {
-                const code = result.getText();
-                const now = new Date();
+       const beepSound = document.getElementById('beepSound'); // récupère le son
 
-                const date = now.toLocaleDateString("fr-FR");   // Exemple : 17/09/2025
-                const heure = now.toLocaleTimeString("fr-FR"); // Exemple : 14:32:05
+codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+    if (result) {
+        const code = result.getText();
+        const now = new Date();
 
-                // Sauvegarde avec date et heure séparées
-                scannedCodes.push({ code, date, heure });
+        const date = now.toLocaleDateString("fr-FR");
+        const heure = now.toLocaleTimeString("fr-FR");
 
-                // Affiche uniquement les 3 derniers scans
-                const lastThree = scannedCodes.slice(-3);
-                lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
+        scannedCodes.push({ code, date, heure });
 
-                statusMsg.textContent = "✅ Scan réussi : " + code;
-            } else if (err && !(err instanceof ZXing.NotFoundException)) {
-                statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
-            }
-        });
+        const lastThree = scannedCodes.slice(-3);
+        lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
 
+        statusMsg.textContent = "✅ Scan réussi : " + code;
+
+        // 🔊 joue un bip
+        beepSound.currentTime = 0; // remet au début si déjà en lecture
+        beepSound.play();
+    } else if (err && !(err instanceof ZXing.NotFoundException)) {
+        statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
+    }
+});
     } catch (error) {
         console.error(error);
         if (error.name === "NotAllowedError") {
