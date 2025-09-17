@@ -19,7 +19,9 @@ async function startCamera() {
         statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
 
         codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+            if (!scanning) return;
             if (result) {
+                scanning = false;
                 const code = result.getText();
                 const now = new Date();
                 const date = now.toLocaleDateString("fr-FR");
@@ -41,8 +43,8 @@ async function startCamera() {
 
                 // flash visuel
                 video.style.border = "5px solid lime";
-                setTimeout(() => video.style.border = "2px solid #333", 200);
-
+                setTimeout(() => video.style.border = "2px solid #333", 500);
+                setTimeout(() => { scanning = true; }, 1000);
             } else if (err && !(err instanceof ZXing.NotFoundException)) {
                 statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
             }
