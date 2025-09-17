@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner de codes-barres</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Scanner de codes-barres</h2>
-    <h3>Version 1.172</h3>
+    <h3>Version 1.173</h3>
 
-    <!-- Boutons de contrôle -->
-    <div id="controls">
-        <button id="downloadCsv">💾 Télécharger CSV</button>
-    </div>
+   
 
     <!-- Vidéo -->
     <video id="preview" muted playsinline></video>
@@ -21,7 +18,10 @@
     <!-- Statut et dernier code -->
     <p id="status">⏳ Initialisation...</p>
     <p>Dernier code scanné : <span id="lastCode">---</span></p>
-
+     <!-- Boutons de contrôle -->
+    <div id="controls">
+        <button id="downloadCsv">💾 Télécharger CSV</button>
+    </div>
     <!-- Son bip -->
     <audio id="beepSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
 

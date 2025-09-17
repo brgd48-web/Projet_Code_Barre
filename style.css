@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
-    background: #f8f8f8;
+    background: #8FAD88;
 }
 
 #preview {
@@ -22,21 +22,34 @@ video {
     height: 125px;      /* ajout px */
     display: block;
     margin: 0 auto;     /* centre horizontalement */
-    background: #eee;
+    background: #000000;
     object-fit: cover;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 20px 60px;       /* Gros bouton */
+    font-size: 24px;           /* Texte plus grand */
+    font-weight: bold;
     cursor: pointer;
-    margin: 5px;
+    margin: 20px auto;         /* Centré horizontalement */
+    display: block;            /* Pour que margin auto fonctionne */
     border: none;
-    border-radius: 5px;
-    background-color: #0078D7;
-    color: white;
-    transition: 0.2s;
+    border-radius: 20px;       /* Bords arrondis */
+    background-color: #598eb9; /* Bleu joli */
+    color: #7F9C96;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Ombre légère */
 }
+
+button:hover {
+    background-color: #003258; /* Bleu plus foncé au survol */
+    transform: scale(1.05);    /* Légère augmentation de taille */
+}
+
+button:active {
+    transform: scale(0.95);    /* Effet "pression" */
+}
+
 
 button:hover {
     background-color: #005a9e;
