@@ -15,10 +15,17 @@ async function startCamera() {
             return;
         }
 
-        // Choisir la caméra arrière si dispo
-        const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
+          const constraints = {
+            video: {
+                facingMode: { exact: "environment" } // "environment" = caméra arrière
+            }
+        };
 
-        statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
+        // Lance la caméra arrière
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+
+        statusMsg.textContent = "📷 Caméra arrière activée, scannez un code-barres...";
 
         codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
             if (result) {
