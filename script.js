@@ -15,7 +15,8 @@ async function startCamera() {
             return;
         }
 
-          const constraints = {
+        // On essaie de forcer la caméra arrière
+        const constraints = {
             video: {
                 facingMode: { exact: "environment" } // "environment" = caméra arrière
             }
@@ -27,18 +28,15 @@ async function startCamera() {
 
         statusMsg.textContent = "📷 Caméra arrière activée, scannez un code-barres...";
 
-        codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+        // Décodage via le flux
+        codeReader.decodeFromVideoDevice(null, video, (result, err) => {
             if (result) {
                 const code = result.getText();
                 const now = new Date();
+                const date = now.toLocaleDateString("fr-FR");
+                const heure = now.toLocaleTimeString("fr-FR");
 
-                const date = now.toLocaleDateString("fr-FR");   // Exemple : 17/09/2025
-                const heure = now.toLocaleTimeString("fr-FR"); // Exemple : 14:32:05
-
-                // Sauvegarde avec date et heure séparées
                 scannedCodes.push({ code, date, heure });
-
-                // Affiche uniquement les 3 derniers scans
                 const lastThree = scannedCodes.slice(-3);
                 lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
 
@@ -50,8 +48,20 @@ async function startCamera() {
 
     } catch (error) {
         console.error(error);
-        if (error.name === "NotAllowedError") {
-            statusMsg.textContent = "⚠️ Accès caméra refusé.";
+        if (error.name === "OverconstrainedError") {
+            statusMsg.textContent = "⚠️ Impossible de forcer la caméra arrière, utilisation par défaut.";
+            codeReader.decodeFromVideoDevice(undefined, video, (result, err) => {
+                if (result) {
+                    const code = result.getText();
+                    const now = new Date();
+                    scannedCodes.push({ code, date: now.toLocaleDateString("fr-FR"), heure: now.toLocaleTimeString("fr-FR") });
+                    const lastThree = scannedCodes.slice(-3);
+                    lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
+                    statusMsg.textContent = "✅ Scan réussi : " + code;
+                }
+            });
+        } else if (error.name === "NotAllowedError") {
+            statusMsg.textContent = "⚠️ Autorise l’accès caméra dans ton navigateur Android.";
         } else {
             statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
         }
