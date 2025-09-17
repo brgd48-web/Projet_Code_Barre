@@ -3,11 +3,10 @@ const video = document.getElementById('preview');
 const lastCode = document.getElementById('lastCode');
 const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
-const startBtn = document.getElementById('startBtn');
+const beepSound = document.getElementById('beepSound');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
 
-// Fonction scan
 async function startCamera() {
     try {
         const devices = await codeReader.listVideoInputDevices();
@@ -17,16 +16,12 @@ async function startCamera() {
         }
 
         const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
-
         statusMsg.textContent = "📷 Caméra activée, scannez un code-barres...";
-
-        const beepSound = document.getElementById('beepSound');
 
         codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
             if (result) {
                 const code = result.getText();
                 const now = new Date();
-
                 const date = now.toLocaleDateString("fr-FR");
                 const heure = now.toLocaleTimeString("fr-FR");
 
@@ -39,16 +34,15 @@ async function startCamera() {
 
                 // bip
                 beepSound.currentTime = 0;
-                beepSound.play();
+                beepSound.play().catch(() => console.log("Audio bloqué"));
 
                 // vibration (Android)
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);
-                }
+                if (navigator.vibrate) navigator.vibrate(200);
 
                 // flash visuel
                 video.style.border = "5px solid lime";
                 setTimeout(() => video.style.border = "2px solid #333", 200);
+
             } else if (err && !(err instanceof ZXing.NotFoundException)) {
                 statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
             }
@@ -69,15 +63,12 @@ downloadBtn.addEventListener('click', () => {
         alert("Aucun scan enregistré !");
         return;
     }
-
     let csvContent = "Code;Date;Heure\n";
     scannedCodes.forEach(item => {
         csvContent += `${item.code};${item.date};${item.heure}\n`;
     });
-
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", "scans.csv");
@@ -86,8 +77,5 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ▶️ Lance le scan uniquement après clic
-startBtn.addEventListener('click', () => {
-    startCamera();
-    startBtn.disabled = true; // désactive le bouton après lancement
-});
+// Démarrage auto
+startCamera();
