@@ -23,12 +23,16 @@ async function startCamera() {
         }
         const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
 
-        codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
-            if (result) {
-                const code = result.getText();
-                lastCode.textContent = code;
-                scannedCodes.push({ code, date: new Date().toISOString() });
-                statusMsg.textContent = "✅ Scan réussi : " + code;
+       codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+    if (result) {
+        const code = result.getText();
+        scannedCodes.push({ code, date: new Date().toISOString() });
+
+        const lastThree = scannedCodes.slice(-3);
+
+        lastCode.innerHTML = lastThree.map(item => item.code).join("<br>");
+
+        statusMsg.textContent = "✅ Scan réussi : " + code;
             } else if (err && !(err instanceof ZXing.NotFoundException)) {
                 statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
             }
