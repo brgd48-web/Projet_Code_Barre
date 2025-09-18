@@ -41,7 +41,7 @@ async function initCamera() {
             }
         });
 
-        statusMsg.textContent = "📷 Caméra activée (aperçu permanent).";
+        statusMsg.textContent = "📷 Caméra activée ";
 
     } catch (error) {
         console.error(error);
