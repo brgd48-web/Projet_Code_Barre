@@ -80,6 +80,13 @@ downloadBtn.addEventListener('click', () => {
         alert("Aucun scan enregistré !");
         return;
     }
+    let fileName = prompt("Nom du fichier CSV :", "scans");
+    if (!fileName) return; // si annulation, on sort
+
+    // ajouter extension .csv si l'utilisateur ne l'a pas mise
+    if (!fileName.endsWith(".csv")) {
+        fileName += ".csv";
+    }
     let csvContent = "Code;Date;Heure\n";
     scannedCodes.forEach(item => {
         csvContent += `${item.code};${item.date};${item.heure}\n`;
