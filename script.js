@@ -7,12 +7,17 @@ const beepSound = document.getElementById('beepSound');
 const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
+let isScanning = false; // 👉 état du scan
 
 async function startCameraOnce() {
+    if (isScanning) return; // si déjà en cours, ne rien faire
+    isScanning = true;
+
     try {
         const devices = await codeReader.listVideoInputDevices();
         if (devices.length === 0) {
             statusMsg.textContent = "❌ Aucune caméra détectée.";
+            isScanning = false;
             return;
         }
 
@@ -46,8 +51,10 @@ async function startCameraOnce() {
 
             // 👉 Stop caméra après un scan
             codeReader.reset();
+            isScanning = false; // on libère l’état
         }).catch(err => {
             statusMsg.textContent = "⚠️ Erreur : " + err;
+            isScanning = false;
         });
 
     } catch (error) {
@@ -57,6 +64,7 @@ async function startCameraOnce() {
         } else {
             statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
         }
+        isScanning = false;
     }
 }
 
