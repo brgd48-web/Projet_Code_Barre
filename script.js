@@ -8,13 +8,9 @@ const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
 let deviceId = null;
-let isScanning = false;
+let scanActive = false; // active uniquement quand on clique sur Scan
 
-// Canvas temporaire pour scanner
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-
-// 📷 Démarrer la caméra (aperçu permanent)
+// Démarrer la caméra (aperçu permanent)
 async function initCamera() {
     try {
         const devices = await codeReader.listVideoInputDevices();
@@ -25,9 +21,17 @@ async function initCamera() {
 
         deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
 
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
-        video.srcObject = stream;
-        video.play();
+        // Flux vidéo en continu
+        await codeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+            if (!scanActive) return; // n'analyse que si Scan est actif
+
+            if (result) {
+                handleResult(result.getText());
+            } else if (err && !(err instanceof ZXing.NotFoundException)) {
+                statusMsg.textContent = "⚠️ Erreur lecture code : " + err;
+            }
+        });
+
         statusMsg.textContent = "📷 Caméra activée (en attente d’un scan).";
 
     } catch (err) {
@@ -36,46 +40,39 @@ async function initCamera() {
     }
 }
 
-// 🔎 Scanner un code quand on clique sur Scan
-async function scanOnce() {
-    if (isScanning || !deviceId) return;
-    isScanning = true;
-    statusMsg.textContent = "🔎 Scannez un code-barres...";
+// Traiter le code scanné
+function handleResult(code) {
+    scanActive = false; // désactive le scan après lecture
 
-    // Copier image de la vidéo dans le canvas
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const now = new Date();
+    const date = now.toLocaleDateString("fr-FR");
+    const heure = now.toLocaleTimeString("fr-FR");
 
-    try {
-        const result = codeReader.decodeFromImage(canvas); // Scan unique depuis le canvas
-        const code = result.getText();
-        const now = new Date();
-        const date = now.toLocaleDateString("fr-FR");
-        const heure = now.toLocaleTimeString("fr-FR");
+    scannedCodes.push({ code, date, heure });
 
-        scannedCodes.push({ code, date, heure });
-        const lastThree = scannedCodes.slice(-3);
-        lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
+    const lastThree = scannedCodes.slice(-3);
+    lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
 
-        statusMsg.textContent = "✅ Scan réussi : " + code;
+    statusMsg.textContent = "✅ Scan réussi : " + code;
 
-        // Effets sonores et visuels
-        beepSound.currentTime = 0;
-        beepSound.play().catch(() => console.log("Audio bloqué"));
-        if (navigator.vibrate) navigator.vibrate(200);
+    // bip et vibration
+    beepSound.currentTime = 0;
+    beepSound.play().catch(() => console.log("Audio bloqué"));
+    if (navigator.vibrate) navigator.vibrate(200);
 
-        video.style.border = "5px solid lime";
-        setTimeout(() => video.style.border = "2px solid #333", 500);
-
-    } catch (err) {
-        statusMsg.textContent = "⚠️ Aucun code détecté.";
-    } finally {
-        isScanning = false;
-    }
+    // flash visuel
+    video.style.border = "5px solid lime";
+    setTimeout(() => video.style.border = "2px solid #333", 500);
 }
 
-// 💾 Télécharger CSV
+// Scan seulement quand on clique
+scanBtn.addEventListener('click', () => {
+    if (!deviceId) return;
+    scanActive = true;
+    statusMsg.textContent = "🔎 Scannez un code-barres...";
+});
+
+// Télécharger CSV
 downloadBtn.addEventListener('click', () => {
     if (scannedCodes.length === 0) {
         alert("Aucun scan enregistré !");
@@ -95,8 +92,5 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ⚡ Scan seulement au clic
-scanBtn.addEventListener('click', scanOnce);
-
-// 🔥 Démarre la caméra dès le début
+// Démarrer la caméra dès le début
 initCamera();
