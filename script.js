@@ -80,11 +80,15 @@ downloadBtn.addEventListener('click', () => {
         alert("Aucun scan enregistré !");
         return;
     }
-    let fileName = prompt("Nom du fichier CSV :", "scans");
-    if (!fileName) return; // si annulation, on sort
+    let fileName = window.prompt("Choisis un nom pour ton fichier CSV :", "scans");
+    
+    // Si l’utilisateur annule ou met vide → on annule
+    if (fileName === null || fileName.trim() === "") {
+        return;
+    }
 
-    // ajouter extension .csv si l'utilisateur ne l'a pas mise
-    if (!fileName.endsWith(".csv")) {
+    // Vérifie l’extension .csv
+    if (!fileName.toLowerCase().endsWith(".csv")) {
         fileName += ".csv";
     }
     let csvContent = "Code;Date;Heure\n";
