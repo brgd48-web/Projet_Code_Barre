@@ -7,10 +7,10 @@ const beepSound = document.getElementById('beepSound');
 const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-let isScanning = false; // 👉 état du scan
+let isScanning = false; // état du scan
 
 async function startCameraOnce() {
-    if (isScanning) return; // si déjà en cours, ne rien faire
+    if (isScanning) return; // évite les doubles clics
     isScanning = true;
 
     try {
@@ -21,10 +21,10 @@ async function startCameraOnce() {
             return;
         }
 
-        const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
+        const deviceId = devices[0].deviceId;
         statusMsg.textContent = "📷 Caméra activée, en attente d’un code...";
 
-        // Démarrer le scan mais arrêter après le premier code trouvé
+        // 🔹 Attend un seul scan
         codeReader.decodeOnceFromVideoDevice(deviceId, video).then(result => {
             const code = result.getText();
             const now = new Date();
@@ -51,7 +51,7 @@ async function startCameraOnce() {
 
             // 👉 Stop caméra après un scan
             codeReader.reset();
-            isScanning = false; // on libère l’état
+            isScanning = false;
         }).catch(err => {
             statusMsg.textContent = "⚠️ Erreur : " + err;
             isScanning = false;
@@ -59,11 +59,7 @@ async function startCameraOnce() {
 
     } catch (error) {
         console.error(error);
-        if (error.name === "NotAllowedError") {
-            statusMsg.textContent = "⚠️ Accès caméra refusé.";
-        } else {
-            statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
-        }
+        statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
         isScanning = false;
     }
 }
@@ -88,7 +84,7 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ⚡ Scan seulement sur clic et une seule fois
+// ⚡ Scan seulement quand tu cliques
 scanBtn.addEventListener('click', () => {
     startCameraOnce();
 });
