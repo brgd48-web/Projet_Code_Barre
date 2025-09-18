@@ -4,7 +4,6 @@ const lastCode = document.getElementById('lastCode');
 const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 const beepSound = document.getElementById('beepSound');
-const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
 
@@ -77,7 +76,5 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ⚡ Démarrage seulement quand on clique sur "SCAN"
-scanBtn.addEventListener('click', () => {
-    startCamera();
-});
+// Démarrage auto
+startCamera();
