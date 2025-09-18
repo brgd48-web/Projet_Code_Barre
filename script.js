@@ -7,10 +7,9 @@ const beepSound = document.getElementById('beepSound');
 const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
-let deviceId = null;
 let isScanning = false;
 
-// 📷 Démarrer la caméra (aperçu seulement, pas de scan)
+// 📷 Démarrer la caméra pour aperçu permanent
 async function initCamera() {
     try {
         const devices = await codeReader.listVideoInputDevices();
@@ -20,29 +19,28 @@ async function initCamera() {
         }
 
         // Choisir caméra arrière si dispo
-        deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
+        const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
 
-        // Afficher flux vidéo sans lecture
-        await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
-            .then(stream => {
-                video.srcObject = stream;
-                video.play();
-                statusMsg.textContent = "📷 Caméra activée (en attente d’un scan).";
-            });
+        // Obtenir le flux vidéo
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+        video.srcObject = stream;
+        await video.play();
+        statusMsg.textContent = "📷 Caméra activée (en attente d’un scan).";
     } catch (error) {
         console.error(error);
         statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
     }
 }
 
-// 🔎 Scanner un seul code quand on appuie sur SCAN
+// 🔎 Scanner un seul code au clic
 async function scanOnce() {
-    if (isScanning || !deviceId) return;
+    if (isScanning) return;
     isScanning = true;
-
     statusMsg.textContent = "🔎 Scannez un code-barres...";
 
-    codeReader.decodeOnceFromVideoDevice(deviceId, video).then(result => {
+    try {
+        // ZXing lit **une seule frame** du flux vidéo
+        const result = await codeReader.decodeFromVideoFrame(video);
         const code = result.getText();
         const now = new Date();
         const date = now.toLocaleDateString("fr-FR");
@@ -59,21 +57,18 @@ async function scanOnce() {
         beepSound.currentTime = 0;
         beepSound.play().catch(() => console.log("Audio bloqué"));
 
-        // vibration
+        // vibration (Android)
         if (navigator.vibrate) navigator.vibrate(200);
 
         // flash visuel
         video.style.border = "5px solid lime";
         setTimeout(() => video.style.border = "2px solid #333", 500);
 
-        // arrêter le scan mais garder la caméra ouverte
-        codeReader.reset();
+    } catch (err) {
+        statusMsg.textContent = "⚠️ Aucun code détecté.";
+    } finally {
         isScanning = false;
-
-    }).catch(err => {
-        statusMsg.textContent = "⚠️ Erreur : " + err;
-        isScanning = false;
-    });
+    }
 }
 
 // 💾 Télécharger CSV
@@ -96,10 +91,8 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ⚡ Scan seulement quand tu cliques
-scanBtn.addEventListener('click', () => {
-    scanOnce();
-});
+// ⚡ Scan uniquement au clic
+scanBtn.addEventListener('click', scanOnce);
 
-// 🔥 Démarre la caméra dès le début (aperçu permanent)
+// 🔥 Démarrage de la caméra dès le début
 initCamera();
