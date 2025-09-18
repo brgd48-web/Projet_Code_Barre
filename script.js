@@ -7,11 +7,12 @@ const beepSound = document.getElementById('beepSound');
 const scanBtn = document.getElementById('Scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
+let deviceId = null;
 let isScanning = false;
 
-// Créer un canvas caché pour capturer les frames
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
+// Canvas temporaire pour scanner
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
 
 // 📷 Démarrer la caméra (aperçu permanent)
 async function initCamera() {
@@ -22,32 +23,32 @@ async function initCamera() {
             return;
         }
 
-        const deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
+        deviceId = devices.length > 1 ? devices[devices.length - 1].deviceId : devices[0].deviceId;
 
         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
         video.srcObject = stream;
-        await video.play();
+        video.play();
         statusMsg.textContent = "📷 Caméra activée (en attente d’un scan).";
 
-    } catch (error) {
-        console.error(error);
-        statusMsg.textContent = "⚠️ Erreur caméra : " + error.message;
+    } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "⚠️ Erreur caméra : " + err.message;
     }
 }
 
-// 🔎 Scanner au clic sans arrêter la vidéo
+// 🔎 Scanner un code quand on clique sur Scan
 async function scanOnce() {
-    if (isScanning) return;
+    if (isScanning || !deviceId) return;
     isScanning = true;
     statusMsg.textContent = "🔎 Scannez un code-barres...";
 
-    // Copier l'image du video dans le canvas
+    // Copier image de la vidéo dans le canvas
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     try {
-        const result = codeReader.decodeFromCanvas(canvas);
+        const result = codeReader.decodeFromImage(canvas); // Scan unique depuis le canvas
         const code = result.getText();
         const now = new Date();
         const date = now.toLocaleDateString("fr-FR");
@@ -56,16 +57,14 @@ async function scanOnce() {
         scannedCodes.push({ code, date, heure });
         const lastThree = scannedCodes.slice(-3);
         lastCode.innerHTML = lastThree.map(item => `${item.code} (${item.heure})`).join("<br>");
+
         statusMsg.textContent = "✅ Scan réussi : " + code;
 
-        // bip
+        // Effets sonores et visuels
         beepSound.currentTime = 0;
         beepSound.play().catch(() => console.log("Audio bloqué"));
-
-        // vibration
         if (navigator.vibrate) navigator.vibrate(200);
 
-        // flash visuel
         video.style.border = "5px solid lime";
         setTimeout(() => video.style.border = "2px solid #333", 500);
 
@@ -96,8 +95,8 @@ downloadBtn.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-// ⚡ Scan uniquement au clic
+// ⚡ Scan seulement au clic
 scanBtn.addEventListener('click', scanOnce);
 
-// 🔥 Démarrage de la caméra
+// 🔥 Démarre la caméra dès le début
 initCamera();
