@@ -102,4 +102,4 @@ scanBtn.addEventListener('click', () => {
 });
 
 // 🔥 Démarre la caméra dès le début (aperçu permanent)
-initCameraPreview();
+initCamera();
