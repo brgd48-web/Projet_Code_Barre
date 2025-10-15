@@ -4,7 +4,7 @@ const lastCode = document.getElementById('lastCode');
 const statusMsg = document.getElementById('status');
 const downloadBtn = document.getElementById('downloadCsv');
 const beepSound = document.getElementById('beepSound');
-const scanBtn = document.getElementById('Scan');
+const scanBtn = document.getElementById('scan');
 
 const codeReader = new ZXing.BrowserMultiFormatReader();
 let deviceId = null;
