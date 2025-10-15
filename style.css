@@ -52,7 +52,46 @@ button:active {
 button:hover {
     background-color: #4c5052;
 }
+/* Bouton SCAN — plus grand et bien centré */
+#scan {
+    padding: 25px 80px;       /* encore plus grand que les autres */
+    font-size: 28px;          /* texte plus gros */
+    background-color: #007bff; /* bleu clair distinctif */
+    color: #fff;
+    font-weight: bold;
+    border-radius: 25px;
+    margin-top: 40px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background-color 0.2s;
+}
+#scan:hover {
+    background-color: #0069d9;
+    transform: scale(1.08);
+}
+#scan:active {
+    transform: scale(0.95);
+}
 
+/* Bouton DOWNLOAD CSV — petit et collé en bas de page */
+#downloadCsv {
+    padding: 10px 25px;
+    font-size: 14px;
+    border-radius: 10px;
+    background-color: #4c5052;
+    color: #fff;
+    position: fixed;     /* reste visible en bas de l’écran */
+    bottom: 20px;        /* espace depuis le bas */
+    right: 20px;         /* espace depuis la droite */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    transition: background-color 0.2s, transform 0.2s;
+}
+#downloadCsv:hover {
+    background-color: #5e6264;
+    transform: scale(1.05);
+}
+#downloadCsv:active {
+    transform: scale(0.95);
+}
 #controls {
     margin: 15px 0;
 }
